@@ -11,17 +11,18 @@ end
 
 loop do
   connections.delete_if do |con|
+    x = con.last
     case con.length
     when 3
-      a, b = wire_value(con[0], signals), con[2]
-      signals[b] = a if a
+      a = wire_value(con[0], signals)
+      signals[x] = a if a
     when 4
-      a, b = wire_value(con[1], signals), con[3]
-      signals[b] = ~a & 65535 if a
+      a = wire_value(con[1], signals)
+      signals[x] = ~a & 65535 if a
     when 5
-      a, b, c, op = wire_value(con[0], signals), wire_value(con[2], signals), con[4], con[1]
+      a, b, op = wire_value(con[0], signals), wire_value(con[2], signals), con[1]
       if a && b
-        signals[c] =
+        signals[x] =
           case op
           when 'AND'
             a & b
@@ -34,7 +35,7 @@ loop do
           end
       end
     end
-    signals[con.last]
+    signals[x]
   end
   break if signals['a']
 end
